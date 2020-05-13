@@ -1,5 +1,5 @@
 {
-  "id": "alloy",
+  "id": "alloy-editor",
   "name": "Alloy Text Editor Full",
   "srcdoc": "./index.html",
   "fieldTypes": ["Text"]
