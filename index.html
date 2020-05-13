@@ -19,25 +19,6 @@
       margin-bottom: -1px;
       min-height: 30em;
     }
-    #content h2 {
-    	line-height: 30px;
-    }
-     #content .img-editor {
-    	max-width: 100%;
-    }
-    .ae-ui .ae-button-bridge .ae-icon-img_asset, 
-    .ae-ui .ae-button-bridge .ae-icon-link_asset {
-    	width: 20px;
-      height: 20px;
-      line-height: 20px;
-    }
-    .ae-icon-img_asset::before {
-       content: "\";
-    }
-    .ae-icon-link_asset::before {
-    	content: "\";
-      color: green;
-    }
   </style>
 </head>
 <body>
@@ -51,92 +32,49 @@
     var currentValue
 
     ext.window.startAutoResizer()
-		
-    CKEDITOR.plugins.add( 'img_asset', {
-      init: function( editor ) {
-          
-      	  editor.addCommand('img_asset', {
-          	 exec: function( editor ) {
-               ext.dialogs.selectSingleAsset({}).then(data => {
-               	console.log(data);
-               	editor.insertHtml( '<img class="img-editor" alt="'+data.fields.title[ext.field.locale]+'" src="' + data.fields.file[ext.field.locale].url + '"/>' );
-               })
-          	}}
-          );
-        	editor.ui.addButton( 'img_asset', {
-            label: 'Insert Image',
-            command: 'img_asset'
-        	});  
-      }
-  });
-    
-  CKEDITOR.plugins.add( 'link_asset', {
-      init: function( editor ) {
-          
-      	  editor.addCommand('link_asset', {
-          	 exec: function( editor ) {
-               ext.dialogs.selectSingleAsset({
-               	 locale: ext.field.locale,
-               }).then(data => {
-                 console.log("data",data);
-                 editor.insertHtml('<a href="'+data.fields.file[ext.field.locale].url+'">'+editor.getSelection().getSelectedText()+'</a>');			
-               })
-          	}}
-          );
-        	editor.ui.addButton( 'link_asset', {
-            label: 'Insert Link',
-            command: 'link_asset'
-        	});  
-      }
-  });
+
+   
     
     const editor = AlloyEditor.editable('content', {
-    extraPlugins: AlloyEditor.Core.ATTRS.extraPlugins.value + ',ae_uibridge,ae_buttonbridge,img_asset,link_asset',
-	toolbars: {
-     add: {
-      buttons: ['image','table','img_asset'],
-      tabIndex: 3
-    },
-    styles: {
-			tabIndex: 1,
-      selections: [
-				{
-					name: 'text',
-					buttons: [{
-						name: 'styles',
-						cfg: {
-							styles: [
-								{
-									name: 'Head 1',
-									style: { element: 'h1' }
-								},
-								{
-									name: 'Head 2',
-									style: { element: 'h2' }
-								},
-								{
-									name: 'Big',
-									style: { element: 'big', attributes: { 'class': 'my_style' } }
-								},
-								{
-									name: 'Small',
-									style: { element: 'small' }
-								},
-								{
-									name: 'Code',
-									style: { element: 'code' }
-								}
-							]
-						}
-					},'bold', 'italic', 'underline', 'link','ul','link_asset'],
-					test: AlloyEditor.SelectionTest.text
-				}
-			]
-		}
-	}
-})._editor
+      toolbars: {
+        add: {
+          buttons: ['image','table','hline']
+        },
+        styles: {
+          selections: [
+            {
+              name: 'link',
+              buttons: ['linkEdit'],
+              test: AlloyEditor.SelectionTest.link
+            },
+            {
+              name: 'text',
+              buttons: ['styles','link','bold','italic','underline','quote','ul','ol','paragraphLeft','paragraphCenter','paragraphRight','paragraphJustify','indent', 'outdentBlock','code'],		
+              test: AlloyEditor.SelectionTest.text
+            },
+            {
+              name: 'image',
+              buttons: ['imageLeft','imageRight'],
+              test: AlloyEditor.SelectionTest.image
+            },
+            {
+              name: 'table',
+              buttons: ['tableHeading','tableCell','tableColumn','tableRow','tableRemove'],
+              getArrowBoxClasses: AlloyEditor.SelectionGetArrowBoxClasses.table,
+  						setPosition: AlloyEditor.SelectionSetPosition.table,
+              test: AlloyEditor.SelectionTest.table
+            }
+          ]
+        }
+      }
+    })._editor;
+    
+    
+    
+    
+    
     editor.setData(ext.field.getValue())
-	  console.log(editor);
+
     ext.field.onValueChanged(function(value) {
       if (value !== currentValue) {
         currentValue = value
